@@ -13,10 +13,10 @@ Obstacle::Obstacle(int16_t windowY)
 }
 
 
-void Obstacle::updateObstacle()
+void Obstacle::moveObstacle()
 {
-	topRectangle.x += obstacleScrollSpeed;
-	bottomRectangle.x += obstacleScrollSpeed;
+		topRectangle.x += obstacleScrollSpeed;
+		bottomRectangle.x += obstacleScrollSpeed;
 }
 
 void Obstacle::drawObstacle() const
@@ -25,7 +25,7 @@ void Obstacle::drawObstacle() const
 	gb.display.drawRect(bottomRectangle.x, bottomRectangle.y, bottomRectangle.w, bottomRectangle.l);
 }
 
-void Obstacle::resetObstacle(byte previousWindowY)
+void Obstacle::resetObstacle(int8_t previousWindowY)
 {
 	//set an offset so that the random number doesnt stick to top or bottom for too long. Feed the offsets in the random number generator based on where the previous window was
 	int8_t upperOffset;
@@ -51,11 +51,22 @@ void Obstacle::resetObstacle(byte previousWindowY)
 	resetRectangles(previousWindowY + random(lowerOffset, upperOffset));
 }
 
+void Obstacle::resetToDefaults()
+{
+	obstacleScrollSpeed = defaultObstacleScrollSpeed;
+	windowHeight = defaultWindowHeight;
+}
+
 
 void Obstacle::setObstacleX(int16_t newX)
 {
 	topRectangle.x = newX;
 	bottomRectangle.x = newX;
+}
+
+void Obstacle::setWindowHeight(int8_t newWindowHeight)
+{
+	windowHeight = newWindowHeight;
 }
 
 int16_t Obstacle::getObstacleX() const
@@ -100,7 +111,7 @@ int16_t Obstacle::getWindowHeight() const
 
 void Obstacle::resetRectangles(int16_t previousWindowY)
 {
-	topRectangle.x = 4 * 36;
+	topRectangle.x = 4 * 36; //4 (amount of obstacles) * 36 (distance between each in pixels)
 	topRectangle.y = 0;
 	topRectangle.l = previousWindowY - windowHeight / 2;
 
@@ -118,8 +129,3 @@ void Obstacle::resetRectangles(int16_t previousWindowY)
 	bottomRectangle.l = gb.display.height() - bottomRectangle.y;
 
 }
-
-//void Obstacle::resetBottomRectangle()
-//{
-//	
-//}

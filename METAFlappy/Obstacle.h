@@ -17,11 +17,14 @@ public:
 	Obstacle();
 	Obstacle(int16_t WindowY);
 
-	void updateObstacle();
+
+	void moveObstacle();
 	void drawObstacle() const;
-	void resetObstacle(byte previousWindowY);
+	void resetObstacle(int8_t previousWindowY);
+	void resetToDefaults();
 
 	void setObstacleX(int16_t newX);
+	void setWindowHeight(int8_t newWindowHeight);
 
 	int16_t getObstacleX() const;
 	int16_t getObstacleTopY() const;
@@ -32,6 +35,7 @@ public:
 	int16_t getTopHeight() const;
 	int16_t getBottomHeight() const;
 	int16_t getWindowHeight() const;
+
 
 
 private:
@@ -51,6 +55,9 @@ private:
 
 	int16_t windowHeight = 24;
 	int16_t obstacleScrollSpeed = -1;
+
+	int16_t defaultWindowHeight = 24;
+	int16_t defaultObstacleScrollSpeed = -1;
 
 	int16_t previousObstacleX;
 	int16_t previousWindowY;

@@ -7,6 +7,18 @@
 //ctor
 Player::Player(float newX, float newY) : x(newX), y(newY) {}
 
+void Player::initialize()
+{
+	//TODO add switch cases based on use preferences
+	gravity = 0.3;
+	friction = 0.95;
+	speedY = 0;
+	score = 0;
+	isAlive = true;
+	x = 3;
+	y = 5;
+}
+
 void Player::updatePlayer()
 {
 	speedY += gravity;
@@ -62,4 +74,14 @@ void Player::increaseScore()
 int16_t Player::getScore()
 {
 	return score;
+}
+
+bool Player::isPlayerAlive()
+{
+	return isAlive;
+}
+
+void Player::changePlayerState(bool newState)
+{
+	isAlive = newState;
 }

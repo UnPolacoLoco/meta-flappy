@@ -5,7 +5,7 @@
 #include "ObstacleHandler.h"
 
 
-void ObstacleHandler::initialize(Player* player)
+void ObstacleHandler::initializeHandler(Player* player)
 {
 	this->player = player;
 	obstacles[0] = Obstacle(40);
@@ -20,6 +20,30 @@ void ObstacleHandler::initialize(Player* player)
 	}
 }
 
+void ObstacleHandler::resetObstacles()
+{
+	obstacles[0] = Obstacle(40);
+	obstacles[0].setObstacleX(gb.display.width() / 2);
+	obstacleX = obstacles[0].getObstacleX();
+
+	for (int i = 1; i < NUM_OF_OBSTACLES; i++)
+	{
+		obstacles[i] = Obstacle(40 + random(-15, 15));
+		obstacles[i].setObstacleX(obstacleX + SPACE_BETWEEN_OBSTACLES);
+		obstacleX += SPACE_BETWEEN_OBSTACLES;
+		
+	}
+
+}
+
+void ObstacleHandler::resetToDefaults()
+{
+	for (int i = 0; i < NUM_OF_OBSTACLES; i++)
+	{
+		obstacles[i].resetToDefaults();
+	}
+}
+
 void ObstacleHandler::drawObstacles() const
 {
 	gb.display.setColor(GREEN);
@@ -30,11 +54,11 @@ void ObstacleHandler::drawObstacles() const
 	}
 }
 
-void ObstacleHandler::updateObstacles()
+void ObstacleHandler::moveObstacles()
 {
 	for (int i = 0; i < NUM_OF_OBSTACLES; i++)
 	{
-		obstacles[i].updateObstacle(); //move obstacles along
+		obstacles[i].moveObstacle(); //move obstacles along
 
 		if (obstacles[i].getObstacleX() + obstacles[i].getWidth() < 0) //if obstacle leaves the screen behing the player
 		{
@@ -68,4 +92,12 @@ bool ObstacleHandler::checkCollision() const
 	}
 
 	return false;
+}
+
+void ObstacleHandler::setWindowHeight(int8_t newWindowHight)
+{
+	for (int i = 0; i < NUM_OF_OBSTACLES; i++)
+	{
+		obstacles[i].setWindowHeight(newWindowHight);
+	}
 }

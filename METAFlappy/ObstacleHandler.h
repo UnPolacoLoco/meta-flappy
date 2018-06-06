@@ -10,16 +10,19 @@
 #endif
 #include "Obstacle.h"
 #include "Player.h"
-#include <Gamebuino-Meta.h>
 
 class ObstacleHandler
 {
 public:
-	void initialize(Player* player);
+	void initializeHandler(Player* player);
+	void resetObstacles();
+	void resetToDefaults();
 	void drawObstacles() const;
-	void updateObstacles();;
+	void moveObstacles();
 
 	bool checkCollision() const;
+
+	void setWindowHeight(int8_t newWindowHight);
 
 private:
 	Obstacle obstacles[4];
@@ -27,6 +30,7 @@ private:
 	int16_t NUM_OF_OBSTACLES = 4;
 	int16_t SPACE_BETWEEN_OBSTACLES = 36;
 	Player* player = nullptr;
+	
 };
 
 #endif

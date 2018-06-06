@@ -17,8 +17,12 @@ class Player
 {
 public:
 	Player(float newX, float newY);
+
+	void initialize();
+
 	void updatePlayer();
 	void drawPlayer();
+
 	float getX();
 	float getY();
 	int8_t getWidth();
@@ -26,6 +30,9 @@ public:
 
 	void increaseScore();
 	int16_t getScore();
+
+	bool isPlayerAlive();
+	void changePlayerState(bool newState);
 
 private:
 	float gravity = 0.2;
@@ -39,6 +46,8 @@ private:
 	int16_t buttonCooldownCountDown = 0;
 	int16_t BUTTON_COOLDOWN = 8;
 	int16_t score = 0;
+
+	bool isAlive = true;
 
 
 };
