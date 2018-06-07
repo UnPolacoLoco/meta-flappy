@@ -9,13 +9,15 @@
 	#include "WProgram.h"
 #endif
 
-
+#include <Gamebuino-Meta.h>
+#include "Images.h"
 
 class Obstacle
 {
 public:
 	Obstacle();
 	Obstacle(int16_t WindowY);
+	Obstacle(int16_t windowY, int8_t windowHeight, int8_t scrollSpeed);
 
 
 	void moveObstacle();
@@ -25,18 +27,21 @@ public:
 
 	void setObstacleX(int16_t newX);
 	void setWindowHeight(int8_t newWindowHeight);
+	void changeScrollSpeed(int8_t newScrollSpeed);
+	int8_t getScrollSpeed();
 
 	int16_t getObstacleX() const;
 	int16_t getObstacleTopY() const;
 	int16_t getObstacleBottomY() const;
 	int16_t getObstacleWindowY() const;
+	void setObstacleWindowY(int8_t newWindowY);
 
 	int16_t getWidth() const;
 	int16_t getTopHeight() const;
 	int16_t getBottomHeight() const;
 	int16_t getWindowHeight() const;
 
-
+	
 
 private:
 
@@ -54,6 +59,7 @@ private:
 	Rectangle bottomRectangle;
 
 	int16_t windowHeight = 24;
+	
 	int16_t obstacleScrollSpeed = -1;
 
 	int16_t defaultWindowHeight = 24;
@@ -61,6 +67,7 @@ private:
 
 	int16_t previousObstacleX;
 	int16_t previousWindowY;
+
 
 
 

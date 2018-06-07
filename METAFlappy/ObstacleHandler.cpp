@@ -8,9 +8,10 @@
 void ObstacleHandler::initializeHandler(Player* player)
 {
 	this->player = player;
-	obstacles[0] = Obstacle(40);
-	obstacles[0].setObstacleX(gb.display.width() / 2);
+	obstacles[0] = Obstacle(30);
+	obstacles[0].setObstacleX(gb.display.width());
 	obstacleX = obstacles[0].getObstacleX();
+	
 
 	for (int i = 1; i < NUM_OF_OBSTACLES; i++)
 	{
@@ -22,26 +23,47 @@ void ObstacleHandler::initializeHandler(Player* player)
 
 void ObstacleHandler::resetObstacles()
 {
-	obstacles[0] = Obstacle(40);
-	obstacles[0].setObstacleX(gb.display.width() / 2);
+	for (int i = 0; i < NUM_OF_OBSTACLES; i++)
+	{
+		obstacles[i] = 0;
+
+	}
+
+	obstacles[0] = Obstacle(30);
+	obstacles[0].setObstacleX(gb.display.width());
 	obstacleX = obstacles[0].getObstacleX();
 
 	for (int i = 1; i < NUM_OF_OBSTACLES; i++)
 	{
-		obstacles[i] = Obstacle(40 + random(-15, 15));
+		obstacles[i] = Obstacle(30 + random(-15, 15));
 		obstacles[i].setObstacleX(obstacleX + SPACE_BETWEEN_OBSTACLES);
 		obstacleX += SPACE_BETWEEN_OBSTACLES;
-		
 	}
+
 
 }
 
-void ObstacleHandler::resetToDefaults()
+void ObstacleHandler::resetObstacles(int8_t scrolLSpeed, int8_t windowHeight)
 {
 	for (int i = 0; i < NUM_OF_OBSTACLES; i++)
 	{
-		obstacles[i].resetToDefaults();
+		obstacles[i] = 0;
 	}
+
+	obstacles[0] = Obstacle(30, windowHeight, scrolLSpeed);
+	obstacles[0].setObstacleX(gb.display.width());
+	obstacleX = obstacles[0].getObstacleX();
+
+	for (int i = 1; i < NUM_OF_OBSTACLES; i++)
+	{
+		obstacles[i] = Obstacle(30 + random(-15, 15), windowHeight, scrolLSpeed);
+		obstacles[i].setObstacleX(obstacleX + SPACE_BETWEEN_OBSTACLES);
+		obstacleX += SPACE_BETWEEN_OBSTACLES;
+	}
+
+	drawObstacles();
+
+
 }
 
 void ObstacleHandler::drawObstacles() const
@@ -73,6 +95,19 @@ void ObstacleHandler::moveObstacles()
 			player->increaseScore();
 		}
 	}
+}
+
+void ObstacleHandler::changeScrollSpeed(int8_t newScrollSpeed)
+{
+	for (int i = 0; i < NUM_OF_OBSTACLES; i++)
+	{
+		obstacles[i].changeScrollSpeed(newScrollSpeed);
+	}
+}
+
+int8_t ObstacleHandler::getScrollSpeed()
+{
+	return obstacles[0].getScrollSpeed();
 }
 
 bool ObstacleHandler::checkCollision() const

@@ -1,11 +1,8 @@
+#include "Images.h"
 #include "ObstacleHandler.h"
 #include "Obstacle.h"
 #include "Player.h"
 #include <Gamebuino-Meta.h>
-
-//float gravity = 0.3;
-//float friction = 0.95;
-
 
 Player player = Player(3, 5);
 ObstacleHandler handler;
@@ -17,11 +14,16 @@ const int8_t CREDITS = 2;
 const int8_t DEATH_SCREEN = 3;
 
 int8_t currentMode = TITLE_SCREEN;
+int8_t selectedSpeed = -1;
+int8_t selectedWindowHeight = 24;
 
-const char* titleScreenMenuEntries[] = { "Play", "Options", "Credits" };
-const char* optionsMenuEntries[] = { "Window Size", "Speed", "RST to defaults", "BACK"};
-const char* windowSizeOptionsMenuEntries[] = { "8", "24" };
-const char* speedOptionsMenuEntries[] = { "Normal", "Fast" };
+int16_t mapBaseDisplayCounter = 0;
+int16_t mapBGDisplayCounter = 0;
+
+const char* titleScreenMenuEntries[] = { "PLAY", "OPTIONS", "CREDITS" };
+const char* optionsMenuEntries[] = { "WINDOW SIZE", "SPEED","              APPLY", "               BACK"};
+const char* windowSizeOptionsMenuEntries[] = {"18", "20", "24", "               BACK" };
+const char* speedOptionsMenuEntries[] = { "NORMAL", "FAST", "               BACK" };
 
 
 
@@ -32,20 +34,6 @@ void setup() {
 	handler.initializeHandler(&player);
 	player.initialize();
 	gb.pickRandomSeed();
-	switch (gb.gui.menu("Window Size", windowSizeOptionsMenuEntries))
-	{
-	case 0:
-		gb.display.print("SETTING WINDOW HEIGHT!");
-		handler.setWindowHeight(8);
-		handler.resetObstacles();
-		break;
-	case 1:
-		handler.setWindowHeight(24);
-		break;
-	}
-
-
-
 }
 
 
@@ -53,6 +41,7 @@ void loop() {
   // put your main code here, to run repeatedly:
 	while (!gb.update());
 	gb.display.clear();
+
 
 	switch (currentMode)
 	{
@@ -62,6 +51,25 @@ void loop() {
 	case IN_GAME:
 		if (player.isPlayerAlive())
 		{
+			gb.display.drawImage(mapBGDisplayCounter, 0, bg);
+
+			if (gb.frameCount % 15 == 0)
+			{
+				mapBGDisplayCounter--;
+			}
+
+			if (mapBGDisplayCounter == -80)
+			{
+				mapBGDisplayCounter = 0;
+			}
+
+			gb.display.drawImage(mapBaseDisplayCounter, gb.display.height() - 5, mapBottom);
+			mapBaseDisplayCounter += handler.getScrollSpeed();
+			if (mapBaseDisplayCounter == -80)
+			{
+				mapBaseDisplayCounter = 0;
+			}
+			
 			player.updatePlayer();
 			player.drawPlayer();
 
@@ -72,12 +80,13 @@ void loop() {
 
 			if (handler.checkCollision())
 				player.changePlayerState(false);
+
 		}
 		else
 		{
 			currentMode = DEATH_SCREEN;
 			player.initialize();
-			handler.resetObstacles();
+			handler.resetObstacles(selectedSpeed, selectedWindowHeight);
 		}
 		break;
 
@@ -90,29 +99,51 @@ void loop() {
 		break;
 
 	case OPTIONS:
+		
+
 		switch (gb.gui.menu("OPTIONS", optionsMenuEntries))
 		{
+		default:
+			gb.display.fontSize = 1;
+			gb.display.setCursorY(50);
+			gb.display.print("SPEED: %d");
+			gb.display.print("HEIGHT: %d");
+			break;
+
 		case 0:
-			switch (gb.gui.menu("Window Size", windowSizeOptionsMenuEntries))
+			switch (gb.gui.menu("WINDOW SIZE", windowSizeOptionsMenuEntries))
 			{
 			case 0:
-				gb.display.print("SETTING WINDOW HEIGHT!");
-				handler.setWindowHeight(8);
-				handler.resetObstacles();
+				selectedWindowHeight = 18;
 				break;
 			case 1:
-				handler.setWindowHeight(24);
+				selectedWindowHeight = 20;
+				break;
+			case 2:
+				selectedWindowHeight = 24;
+				break;
+			case 3:
 				break;
 			}
 			break;
 		case 1:
-			gb.display.println("Speed");
-			switch (gb.gui.menu("Speed", speedOptionsMenuEntries))
+			switch (gb.gui.menu("SPEED", speedOptionsMenuEntries))
+			{
+			case 0:
+				selectedSpeed = -1;
+				break;
+			case 1:
+				selectedSpeed = -2;
+				break;
+			case 2:
+				break;
+			}
 			break;
-		case 2:
-			gb.display.println("Defaults");
+		case 2: //Accept button
+			handler.resetObstacles(selectedSpeed, selectedWindowHeight);
+			currentMode = TITLE_SCREEN;
 			break;
-		case 3:
+		case 3: //back button
 			currentMode = TITLE_SCREEN;
 			break;
 		}

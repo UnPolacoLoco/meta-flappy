@@ -8,17 +8,24 @@
 #else
 	#include "WProgram.h"
 #endif
+
+
 #include "Obstacle.h"
 #include "Player.h"
+
+
+
 
 class ObstacleHandler
 {
 public:
 	void initializeHandler(Player* player);
 	void resetObstacles();
-	void resetToDefaults();
+	void resetObstacles(int8_t scrolLSpeed, int8_t windowHeight);
 	void drawObstacles() const;
 	void moveObstacles();
+	void changeScrollSpeed(int8_t newScrollSpeed);
+	int8_t getScrollSpeed();
 
 	bool checkCollision() const;
 

@@ -11,6 +11,8 @@
 	#include "WProgram.h"
 #endif
 
+#include "Images.h"
+
 
 
 class Player
@@ -35,7 +37,7 @@ public:
 	void changePlayerState(bool newState);
 
 private:
-	float gravity = 0.2;
+	float gravity = 0.25;
 	float friction = 0.95;
 	float x;
 	float y;

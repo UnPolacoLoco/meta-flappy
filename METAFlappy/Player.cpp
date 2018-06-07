@@ -9,8 +9,7 @@ Player::Player(float newX, float newY) : x(newX), y(newY) {}
 
 void Player::initialize()
 {
-	//TODO add switch cases based on use preferences
-	gravity = 0.3;
+	gravity = 0.25;
 	friction = 0.95;
 	speedY = 0;
 	score = 0;
@@ -23,7 +22,6 @@ void Player::updatePlayer()
 {
 	speedY += gravity;
 	speedY *= friction;
-
 	
 	if (gb.buttons.pressed(BUTTON_A) && buttonCooldownCountDown <= 0)
 	{
@@ -42,8 +40,21 @@ void Player::updatePlayer()
 
 void Player::drawPlayer()
 {
-	gb.display.setColor(YELLOW);
-	gb.display.fillRect(x, y, width, height);
+
+	if (speedY > 0) //draw bird going down
+	{
+		bird.setFrame(1);
+		gb.display.drawImage(x, y, bird);
+		gb.display.drawImage(x, y - 2, wing);
+
+	}
+	else if (speedY < 0) //draw bird going up
+	{
+		bird.setFrame(0);
+		gb.display.drawImage(x,y,bird);
+		gb.display.drawImage(x, y + 2, wingDown);
+	}
+
 }
 
 float Player::getX()
