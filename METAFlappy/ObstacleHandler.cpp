@@ -97,7 +97,7 @@ void ObstacleHandler::moveObstacles()
 	}
 }
 
-void ObstacleHandler::changeScrollSpeed(int8_t newScrollSpeed)
+void ObstacleHandler::setScrollSpeed(int8_t newScrollSpeed)
 {
 	for (int i = 0; i < NUM_OF_OBSTACLES; i++)
 	{

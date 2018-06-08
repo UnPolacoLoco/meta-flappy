@@ -44,14 +44,14 @@ void Obstacle::resetObstacle(int8_t previousWindowY)
 
 	if (previousWindowY > gb.display.height() - 20)
 	{
-		lowerOffset = -30;
+		lowerOffset = -25;
 		upperOffset = -10;
 
 	}
 	else if (previousWindowY < 20)
 	{
 		lowerOffset = 10;
-		upperOffset = 30;
+		upperOffset = 25;
 	}
 	else
 	{
@@ -62,11 +62,6 @@ void Obstacle::resetObstacle(int8_t previousWindowY)
 	resetRectangles(previousWindowY + random(lowerOffset, upperOffset));
 }
 
-void Obstacle::resetToDefaults()
-{
-	obstacleScrollSpeed = defaultObstacleScrollSpeed;
-	windowHeight = defaultWindowHeight;
-}
 
 
 void Obstacle::setObstacleX(int16_t newX)
@@ -138,7 +133,7 @@ int16_t Obstacle::getWindowHeight() const
 
 void Obstacle::resetRectangles(int16_t previousWindowY)
 {
-	topRectangle.x = 4 * 36; //4 (amount of obstacles) * 36 (distance between each in pixels)
+	topRectangle.x = 4 * 35; //4 (amount of obstacles) * 35 (distance between each in pixels)
 	topRectangle.y = 0;
 	topRectangle.l = previousWindowY - windowHeight / 2;
 

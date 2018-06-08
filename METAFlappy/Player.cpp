@@ -41,7 +41,7 @@ void Player::updatePlayer()
 void Player::drawPlayer()
 {
 
-	if (speedY > 0) //draw bird going down
+	if (speedY >= 0) //draw bird going down
 	{
 		bird.setFrame(1);
 		gb.display.drawImage(x, y, bird);
@@ -85,6 +85,20 @@ void Player::increaseScore()
 int16_t Player::getScore()
 {
 	return score;
+}
+
+bool Player::checkOutOfBounds()
+{
+	if (y + height >= gb.display.height() - 7)
+	{
+		return true;
+	}
+	else if (y <= 0)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 bool Player::isPlayerAlive()

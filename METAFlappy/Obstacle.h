@@ -23,7 +23,6 @@ public:
 	void moveObstacle();
 	void drawObstacle() const;
 	void resetObstacle(int8_t previousWindowY);
-	void resetToDefaults();
 
 	void setObstacleX(int16_t newX);
 	void setWindowHeight(int8_t newWindowHeight);
@@ -59,18 +58,10 @@ private:
 	Rectangle bottomRectangle;
 
 	int16_t windowHeight = 24;
-	
 	int16_t obstacleScrollSpeed = -1;
-
-	int16_t defaultWindowHeight = 24;
-	int16_t defaultObstacleScrollSpeed = -1;
 
 	int16_t previousObstacleX;
 	int16_t previousWindowY;
-
-
-
-
 
 };
 

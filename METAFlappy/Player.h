@@ -33,6 +33,8 @@ public:
 	void increaseScore();
 	int16_t getScore();
 
+	bool checkOutOfBounds();
+
 	bool isPlayerAlive();
 	void changePlayerState(bool newState);
 

@@ -16,6 +16,10 @@ extern Image mapBottom;
 extern Image bg;
 extern Image obstacleRectangleAddon;
 extern Image wingDown;
+extern Image speedSelection;
+extern Image widthSelection;
+extern Image TwitterHandle;
+extern Image Twitter;
 
 #endif
 

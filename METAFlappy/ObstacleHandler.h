@@ -24,7 +24,7 @@ public:
 	void resetObstacles(int8_t scrolLSpeed, int8_t windowHeight);
 	void drawObstacles() const;
 	void moveObstacles();
-	void changeScrollSpeed(int8_t newScrollSpeed);
+	void setScrollSpeed(int8_t newScrollSpeed);
 	int8_t getScrollSpeed();
 
 	bool checkCollision() const;
@@ -37,7 +37,6 @@ private:
 	int16_t NUM_OF_OBSTACLES = 4;
 	int16_t SPACE_BETWEEN_OBSTACLES = 36;
 	Player* player = nullptr;
-	
 };
 
 #endif
