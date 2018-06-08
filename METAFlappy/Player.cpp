@@ -23,7 +23,7 @@ void Player::updatePlayer()
 	speedY += gravity;
 	speedY *= friction;
 	
-	if (gb.buttons.pressed(BUTTON_A) && buttonCooldownCountDown <= 0)
+	if (gb.buttons.pressed(BUTTON_A) && buttonCooldownCountDown <= 0 && isAlive)
 	{
 		speedY -= 4; 
 		buttonCooldownCountDown = BUTTON_COOLDOWN;
@@ -57,6 +57,11 @@ void Player::drawPlayer()
 
 }
 
+void Player::drawDeadPlayer()
+{
+	gb.display.drawImage(x, y, birdDead);
+}
+
 float Player::getX()
 {
 	return x;
@@ -65,6 +70,11 @@ float Player::getX()
 float Player::getY()
 {
 	return y;
+}
+
+void Player::setX(float newX)
+{
+	x = newX;
 }
 
 int8_t Player::getWidth()

@@ -11,6 +11,7 @@
 #include <Gamebuino-Meta.h>
 extern Image obstacleRectangle;
 extern Image bird;
+extern Image birdDead;
 extern Image wing;
 extern Image mapBottom;
 extern Image bg;
@@ -20,6 +21,7 @@ extern Image speedSelection;
 extern Image widthSelection;
 extern Image TwitterHandle;
 extern Image Twitter;
+
 
 #endif
 

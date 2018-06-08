@@ -1,5 +1,5 @@
 #include "Globals.h"
-#include "MainMenu.h"
+#include "ModeHandler.h"
 #include "Images.h"
 #include "ObstacleHandler.h"
 #include "Obstacle.h"
@@ -8,7 +8,7 @@
 
 Player player = Player(3, 10);
 ObstacleHandler handler;
-MainMenu mainMenu;
+ModeHandler modeHandler;
 
 int16_t mapBaseDisplayCounter = 0;
 int16_t mapBGDisplayCounter = 0;
@@ -30,16 +30,18 @@ void loop() {
 	gb.display.clear();
 
 
-	switch (mainMenu.getMode())
+	switch (modeHandler.getMode())
 	{
 	case MODE::TITLE_SCREEN:
-		mainMenu.showMainMenu();
-		handler.resetObstacles(mainMenu.getSpeed(), mainMenu.getWindowHeight());
+		modeHandler.showMainMenu();
+		handler.resetObstacles(modeHandler.getSpeed(), modeHandler.getWindowHeight());
 		break;
 
 	case MODE::IN_GAME:
-		if (player.isPlayerAlive())
+		while (player.isPlayerAlive())
 		{
+			while (!gb.update());
+			gb.display.clear();
 			gb.display.drawImage(mapBGDisplayCounter, 0, bg);
 
 			if (gb.frameCount % 15 == 0)
@@ -69,15 +71,35 @@ void loop() {
 
 
 			if (handler.checkCollision() || player.checkOutOfBounds())
+			{
 				player.changePlayerState(false);
 
+				float playerX = player.getX();
+
+				while (true) //continue moving thr player to display a death animation
+				{
+					while (!gb.update());
+					gb.display.clear();
+
+					gb.display.drawImage(0, gb.display.height() - 5, mapBottom);
+					handler.drawObstacles();
+					player.updatePlayer();
+					player.drawDeadPlayer();
+					player.setX(playerX++);
+
+					if (player.getY() > gb.display.width())
+					{
+						return;
+					}
+				}
+			}
+
 		}
-		else
-		{
-			mainMenu.setMode(MODE::DEATH_SCREEN);
-			player.initialize();
-			handler.resetObstacles(mainMenu.getSpeed(), mainMenu.getWindowHeight());
-		}
+		
+		modeHandler.setMode(MODE::DEATH_SCREEN);
+		player.initialize();
+		handler.resetObstacles(modeHandler.getSpeed(), modeHandler.getWindowHeight());
+		
 		break;
 
 	case MODE::DEATH_SCREEN:
@@ -85,56 +107,13 @@ void loop() {
 		gb.display.println("Press 'B' to restart game");
 		
 		if (gb.buttons.pressed(BUTTON_B))
-			mainMenu.setMode(MODE::TITLE_SCREEN);
+			modeHandler.setMode(MODE::TITLE_SCREEN);
 		break;
 
 
 	case MODE::CREDITS:
-
-		int16_t cursor = gb.display.width() + 10;
-
-		while (true)
-		{
-			
-			while (!gb.update());
-			gb.display.clear();
-
-			if (gb.frameCount % 15 == 0)
-			{
-				mapBGDisplayCounter--;
-			}
-
-			if (mapBGDisplayCounter <= -80)
-			{
-				mapBGDisplayCounter = 0;
-			}
-
-			gb.display.drawImage(mapBaseDisplayCounter, gb.display.height() - 5, mapBottom);
-			mapBaseDisplayCounter--;
-
-			if (mapBaseDisplayCounter <= -80)
-			{
-				mapBaseDisplayCounter = 0;
-			}
-
-
-			cursor-=2;
-
-			gb.display.drawImage(cursor, 20, TwitterHandle);
-			gb.display.drawImage(cursor - 14, 18, Twitter);
-
-			player.initialize();
-			player.drawPlayer();
-
-			if (cursor < -90)
-			{
-				mainMenu.setMode(MODE::TITLE_SCREEN);
-				break;
-			}
-
-		
-
-		}
+		modeHandler.showCredits();
+		player.initialize();
 		break;
 	}
 	

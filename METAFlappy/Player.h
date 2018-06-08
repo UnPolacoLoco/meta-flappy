@@ -24,9 +24,12 @@ public:
 
 	void updatePlayer();
 	void drawPlayer();
+	void drawDeadPlayer();
 
 	float getX();
 	float getY();
+
+	void setX(float newX);
 	int8_t getWidth();
 	int8_t getHeight();
 
