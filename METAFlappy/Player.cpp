@@ -5,6 +5,7 @@
 #include "Player.h"
 
 //ctor
+Player::Player() {}
 Player::Player(float newX, float newY) : x(newX), y(newY) {}
 
 void Player::initialize()
@@ -90,6 +91,7 @@ int8_t Player::getHeight()
 void Player::increaseScore()
 {
 	score++;
+	gb.sound.playTick();
 }
 
 int16_t Player::getScore()

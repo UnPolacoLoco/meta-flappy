@@ -18,6 +18,7 @@
 class Player
 {
 public:
+	Player();
 	Player(float newX, float newY);
 
 	void initialize();

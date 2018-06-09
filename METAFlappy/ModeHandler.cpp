@@ -4,20 +4,23 @@
 
 #include "ModeHandler.h"
 #include "Images.h"
-#include "Player.h"
-#include "ObstacleHandler.h"
+
 
 
 ModeHandler::ModeHandler()
 {
 	currentOptions.gameMode = 2; // start with Credits
+	player = Player(3, 5);
+	player.initialize();
+	obstacleHandler.initializeHandler(&player);
+	topScore = gb.save.get(0);
 }
 
 void ModeHandler::showMainMenu()
 {
 
 	int8_t speedSelectorPositionX = 6;
-	int8_t windowHeightSelectorPositionX = 28;
+	int8_t windowHeightSelectorPositionX = 39;
 
 	int8_t arrowPosition = 2;
 	int8_t arrowDestination = 0;
@@ -83,11 +86,8 @@ void ModeHandler::showMainMenu()
 		if (gb.buttons.pressed(BUTTON_A)) {
 			switch (verticalSelection) 
 			{
-			case 0:
+			case 0: //the final case after pressing "A" on "Play Game"
 				gb.sound.playOK();
-
-				this->setMode(MODE::IN_GAME);
-				this->setSpeed(speedSelectorPositionX == 6 ? -1 : -2);
 
 				switch (windowHeightSelectorPositionX)
 				{
@@ -104,6 +104,10 @@ void ModeHandler::showMainMenu()
 					this->setWindowHeight(24);
 					break;
 				}
+
+				this->setMode(MODE::IN_GAME);
+				this->setSpeed(speedSelectorPositionX == 6 ? -1 : -2);
+				obstacleHandler.resetObstacles(this->getSpeed(), this->getWindowHeight());
 				return; //exit the loop upon pressing "A" on play game
 				break;
 			case 1:
@@ -117,7 +121,6 @@ void ModeHandler::showMainMenu()
 				break;
 			}
 		}
-
 
 		switch (verticalSelection) {
 		case 0:
@@ -189,16 +192,14 @@ void ModeHandler::showMainMenu()
 			gb.display.drawRect(windowHeightSelectorPositionX, 36, 11, 8);
 		}
 		
-
 		gb.display.drawImage(0, gb.display.height() - 5, mapBottom);
 
-		
 	}
 }
 
 void ModeHandler::showCredits()
 {
-	int16_t cursor = gb.display.width() + 10;
+	float cursor = gb.display.width() + 10;
 	int16_t baseDisplayCounter = 0;
 
 	float logoY = 30;
@@ -220,14 +221,14 @@ void ModeHandler::showCredits()
 			baseDisplayCounter = 0;
 		}
 
-		cursor--;
+		cursor-= 1.5;
 		speedY = speedY + gravi;
 		speedY = speedY * frict;
 
 		logoY = logoY + speedY;
 
 		gb.display.drawImage(cursor, logoY, TwitterHandle);
-		gb.display.drawImage(cursor - 15, logoY - 2, Twitter);
+		gb.display.drawImage(cursor - 30, logoY - 10, twitterLogo);
 
 		if (speedY >= 2)
 			speedY -= 6;
@@ -235,9 +236,115 @@ void ModeHandler::showCredits()
 		if (cursor < -80)
 		{
 			this->setMode(MODE::TITLE_SCREEN);
+			player.initialize();
 			break;
 		}
 
+	}
+}
+
+void ModeHandler::showInGame()
+{
+	int16_t mapBaseDisplayCounter = 0;
+	int16_t mapBGDisplayCounter = 0;
+
+	while (player.isPlayerAlive())
+	{
+		while (!gb.update());
+		gb.display.clear();
+
+		gb.display.drawImage(mapBGDisplayCounter, 0, bg);
+
+		if (gb.frameCount % 15 == 0)
+		{
+			mapBGDisplayCounter--;
+		}
+
+		if (mapBGDisplayCounter <= -80)
+		{
+			mapBGDisplayCounter = 0;
+		}
+
+		gb.display.drawImage(mapBaseDisplayCounter, gb.display.height() - 5, mapBottom);
+		mapBaseDisplayCounter += obstacleHandler.getScrollSpeed();
+		if (mapBaseDisplayCounter <= -80)
+		{
+			mapBaseDisplayCounter = 0;
+		}
+
+		player.updatePlayer();
+		player.drawPlayer();
+
+		obstacleHandler.drawObstacles();
+		obstacleHandler.moveObstacles();
+
+		gb.display.setColor(BLACK);
+		gb.display.fillRect(-1, -1, player.getScore() >= 10 ? 10 : 6, 7);
+		gb.display.setColor(WHITE);
+		gb.display.drawRect(-1, -1, player.getScore() >= 10 ? 10 : 6, 8);
+		gb.display.print(player.getScore());
+
+
+		if (obstacleHandler.checkCollision() || player.checkOutOfBounds()) //if player hits an obstacle or goes out of bounds
+		{
+			player.changePlayerState(false);
+
+			float playerX = player.getX();
+
+			while (true) //continue moving thr player to display a death animation
+			{
+				while (!gb.update());
+				gb.display.clear();
+
+				gb.display.drawImage(0, gb.display.height() - 5, mapBottom);
+				obstacleHandler.drawObstacles();
+				player.updatePlayer();
+				player.drawDeadPlayer();
+				player.setX(playerX++);
+
+				if (player.getY() > gb.display.width())
+				{
+					return;
+				}
+			}
+		}
+
+	}
+
+	this->setMode(MODE::DEATH_SCREEN);
+	obstacleHandler.resetObstacles(this->getSpeed(), this->getWindowHeight());
+}
+
+void ModeHandler::showDeathScreen()
+{
+	gb.display.drawImage(0, 0, bg);
+	gb.display.drawImage(0, gb.display.height() - 5, mapBottom);
+	gb.display.println("Game OVER!\n");
+	gb.display.print("Top score: ");
+	gb.display.println(topScore);
+	gb.display.println("Your score: ");
+	gb.display.setFontSize(2);
+	gb.display.print("      ");
+	gb.display.setColor(YELLOW);
+	gb.display.println(player.getScore());
+	if (player.getScore() >= topScore)
+	{
+		topScore = player.getScore();
+		gb.display.setFontSize(1);
+		gb.display.setColor(RED);
+		gb.display.println("\n ! NEW TOP SCORE !");
+		gb.save.set(0, topScore);
+
+	}
+
+	gb.display.setFontSize(1);
+	gb.display.setColor(YELLOW);
+	gb.display.println("Press 'B' to Restart");
+
+	if (gb.buttons.pressed(BUTTON_B))
+	{
+		player.initialize();
+		this->setMode(MODE::TITLE_SCREEN);
 	}
 }
 
@@ -300,3 +407,4 @@ void ModeHandler::setWindowHeight(int8_t newHeight)
 {
 	currentOptions.windowHeight = newHeight;
 }
+

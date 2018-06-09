@@ -10,9 +10,8 @@
 #endif
 
 #include "Globals.h"
-
-class Player;
-class ObstacleHandler;
+#include "Player.h"
+#include "ObstacleHandler.h"
 
 class ModeHandler
 {
@@ -21,6 +20,9 @@ public:
 	ModeHandler();
 	void showMainMenu();
 	void showCredits();
+	void showInGame();
+	void showDeathScreen();
+
 	MODE getMode();
 	int8_t getSpeed();
 	int8_t getWindowHeight();
@@ -30,7 +32,13 @@ public:
 	void setWindowHeight(int8_t newHeight);
 
 private:
+
+	int8_t topScore;
+
 	GameOptions currentOptions;
+
+	Player player;
+	ObstacleHandler obstacleHandler;
 
 };
 

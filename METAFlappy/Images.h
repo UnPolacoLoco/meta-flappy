@@ -20,7 +20,7 @@ extern Image wingDown;
 extern Image speedSelection;
 extern Image widthSelection;
 extern Image TwitterHandle;
-extern Image Twitter;
+extern Image twitterLogo;
 
 
 #endif
