@@ -22,6 +22,7 @@ public:
 	void showCredits();
 	void showInGame();
 	void showDeathScreen();
+	void initScore();
 
 	MODE getMode();
 	int8_t getSpeed();
@@ -33,12 +34,15 @@ public:
 
 private:
 
-	int8_t topScore;
-
 	GameOptions currentOptions;
 
 	Player player;
 	ObstacleHandler obstacleHandler;
+
+	int8_t speedSelectorPositionX = 6;
+	int8_t windowHeightSelectorPositionX = 39;
+
+	int8_t topScores[8];
 
 };
 

@@ -12,7 +12,7 @@ ModeHandler modeHandler;
 void setup() {
   // put your setup code here, to run once:
 	gb.begin();
-	gb.pickRandomSeed();
+	modeHandler.initScore();
 
 }
 
@@ -21,7 +21,6 @@ void loop() {
   // put your main code here, to run repeatedly:
 	while (!gb.update());
 	gb.display.clear();
-
 
 	switch (modeHandler.getMode())
 	{
@@ -42,10 +41,5 @@ void loop() {
 		modeHandler.showCredits();
 		break;
 	}
-	
-	
-
-
-	
 
 }

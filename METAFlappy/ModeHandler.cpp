@@ -13,22 +13,22 @@ ModeHandler::ModeHandler()
 	player = Player(3, 5);
 	player.initialize();
 	obstacleHandler.initializeHandler(&player);
-	topScore = gb.save.get(0);
+	currentOptions.speed = -1;
+	currentOptions.windowHeight = 24;
+	
 }
 
 void ModeHandler::showMainMenu()
 {
 
-	int8_t speedSelectorPositionX = 6;
-	int8_t windowHeightSelectorPositionX = 39;
 
 	int8_t arrowPosition = 2;
 	int8_t arrowDestination = 0;
 
 
 	int8_t verticalSelection = 0;
-	currentOptions.speed = -1;
-	currentOptions.windowHeight = 18;
+	currentOptions.speed = this->getSpeed();
+	currentOptions.windowHeight = this->getWindowHeight();
 
 
 	while (true) 
@@ -319,21 +319,74 @@ void ModeHandler::showDeathScreen()
 {
 	gb.display.drawImage(0, 0, bg);
 	gb.display.drawImage(0, gb.display.height() - 5, mapBottom);
-	gb.display.println("Game OVER!\n");
+	gb.display.println("Game OVER!");
+	gb.display.print("Mode: ");
+
+	uint8_t index = 0;
+	switch (currentOptions.speed)
+	{
+	case -1:
+		if (currentOptions.windowHeight == 18)
+		{
+			index = 4;
+			gb.display.println("Slow - 18");
+		}
+		else if (currentOptions.windowHeight == 20)
+		{
+			index = 5;
+			gb.display.println("Slow - 20");
+		}
+		else if (currentOptions.windowHeight == 22)
+		{
+			index = 6;
+			gb.display.println("Slow - 22");
+		}
+		else if (currentOptions.windowHeight == 24)
+		{
+			index = 7;
+			gb.display.println("Slow - 24");
+		}
+		break;
+	case -2:
+		if (currentOptions.windowHeight == 18)
+		{
+			index = 0;
+			gb.display.println("Fast - 18");
+		}
+		else if (currentOptions.windowHeight == 20)
+		{
+			index = 1;
+			gb.display.println("Fast - 20");
+		}
+		else if (currentOptions.windowHeight == 22)
+		{
+			index = 2;
+			gb.display.println("Fast - 22");
+		}
+		else if (currentOptions.windowHeight == 24)
+		{
+			index = 3;
+			gb.display.println("Fast - 24");
+		}
+		break;
+
+	}
+	
+	
 	gb.display.print("Top score: ");
-	gb.display.println(topScore);
+	gb.display.println(topScores[index]);
 	gb.display.println("Your score: ");
 	gb.display.setFontSize(2);
 	gb.display.print("      ");
 	gb.display.setColor(YELLOW);
 	gb.display.println(player.getScore());
-	if (player.getScore() >= topScore)
+	if (player.getScore() >= topScores[index])
 	{
-		topScore = player.getScore();
+		topScores[index] = player.getScore();
 		gb.display.setFontSize(1);
 		gb.display.setColor(RED);
 		gb.display.println("\n ! NEW TOP SCORE !");
-		gb.save.set(0, topScore);
+		gb.save.set(index, topScores[index]);
 
 	}
 
@@ -348,6 +401,23 @@ void ModeHandler::showDeathScreen()
 	}
 }
 
+void ModeHandler::initScore()
+{
+	for (int i = 0; i < 8; i++)
+	{
+		topScores[i] = gb.save.get(i);
+	}
+
+	// topScoreF18; //F - Fast  : 18 window height : 0 slot
+	// topScoreF20; // 1 slot
+	// topScoreF22; // 2 slot
+	// topScoreF24; // 3 slot
+
+	// topScoreS18; // 4 slot
+	// topScoreS20; // 5 slot
+	// topScoreS22; // 6 slot
+	// topScoreS24; // 7 slot
+}
 MODE ModeHandler::getMode()
 {
 	switch (currentOptions.gameMode)

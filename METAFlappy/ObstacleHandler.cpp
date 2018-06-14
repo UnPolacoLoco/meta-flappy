@@ -63,7 +63,6 @@ void ObstacleHandler::resetObstacles(int8_t scrolLSpeed, int8_t windowHeight)
 
 	drawObstacles();
 
-
 }
 
 void ObstacleHandler::drawObstacles() const
